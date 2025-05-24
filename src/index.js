@@ -1,74 +1,62 @@
 import MyGPT from "./ClientGPT.js"
 import MessageHistory from "./MessageHistory.js"
-import MyConsole from "./MyConsole.js"
 import TelegramBot from "node-telegram-bot-api"
 
-// console.log(process.env.OPEN_AI_API_KEY)
-
-const initConsole = async () => {
-	const historyMessages = new MessageHistory()
-	const myCosnole = new MyConsole(historyMessages)
-	const myGPT = new MyGPT({
-		apiKey: process.env.OPEN_AI_API_KEY, 
-		history: historyMessages
-	})
-
-
-	while (true) {
-		const result = await myCosnole.question("User message:")
-		
-		if(!result){
-			continue
-		}
-		if(result === "q"){
-			// exit
-			console.log("Thank for work, goodbye")
-			break
-		}
-		if(result === "new"){
-			historyMessages.clear()
-			console.log("Chat cleared, now you have new context.")
-			continue
-		}
-
-
-		try {
-			const answerGPT = await myGPT.ask()
-			// console.log(answerGPT)
-			if(!answerGPT){
-				break
-			}
-
-			if(answerGPT.choices.length !== 1){
-				console.log('More then one choise!')
-			}
-			
-			// gpt answer 
-			console.log(`\n\nGPT:\n${answerGPT.choices[0].message.content}\n\n`)
-			historyMessages.pushAssistant(answerGPT.choices[0].message.content)
-		} catch (error) {
-			break
-		}
-
-	}
-	myCosnole.close()
-	console.log(historyMessages.getHistory())
-}
 
 const initTelegram = () => {
+	const chats = {}
+
 	const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: true})
-	bot.on("message", (msg) => {
+	bot.on("message", async (msg) => {
 		const chatId = msg.chat.id;
 		const messageText = msg.text
 		const userID = msg.from.id
 
-		console.log(String(userID) !== process.env.ADMIN_TELEGRAM_ID, userID, process.env.ADMIN_TELEGRAM_ID)
 		if(String(userID) !== process.env.ADMIN_TELEGRAM_ID) return
-		console.log(msg)
 
 		if(messageText === '/start'){
-			bot.sendMessage(chatId, "Welcome to monkey forest!")
+			const historyMessages = new MessageHistory()
+			chats[chatId] = {
+				chatId,
+				historyMessages,
+				myGPT: new MyGPT({
+					apiKey: process.env.OPEN_AI_API_KEY, 
+					history: historyMessages
+				})
+			}
+			
+			bot.sendMessage(chatId, "Чат успішно створений")
 		}
+
+		const chat = chats[chatId]
+		if(!chat) return
+
+
+		if(messageText?.[0] === "/"){
+			switch (messageText) {
+				case "/history":
+					
+					bot.sendMessage(chatId, "Готується істрія ції сессії")
+					bot.sendMessage(chatId, chat.historyMessages.getHistory())
+					bot.sendMessage(chatId, "Це вся історія цієї сессії")
+					break;
+				case "/new":
+				case "/reset":
+					chat.historyMessages.clear()
+					bot.sendMessage(chatId, "Контекст успішно видалений")
+					break;
+			
+				default:
+					break;
+			}
+		} else {
+			chat.historyMessages.pushUser(messageText)
+			const answerGPT = await chat.myGPT.ask()
+
+			bot.sendMessage(chat.chatId, answerGPT.choices[0].message.content)
+			chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
+		}
+		console.log(messageText)
 	})
 }
 
