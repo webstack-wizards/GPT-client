@@ -5,10 +5,15 @@ const TYPE_ROLE = {
 	ASSISTANT: "assistant"
 }
 
+const BASE_HISTORY = [
+	{ role: TYPE_ROLE.SYSTEM, content: "Ты помощник через консоль."}
+]
+
 class MessageHistory{
-	constructor(){
-		this.history = []
-		this.fullHistory = []
+	constructor({history} = {history: BASE_HISTORY}){
+		this.baseHistory = history
+		this.history = [...this.baseHistory]
+		this.fullHistory = [...this.baseHistory]
 	}
 	getHistory(){
 		return this.history
@@ -17,7 +22,7 @@ class MessageHistory{
 		return this.fullHistory
 	}
 	clear(){
-		this.history = []
+		this.history = [...this.baseHistory]
 	}
 	pushMessage(role, message){
 		this.fullHistory.push({ role, content: message })
