@@ -6,7 +6,7 @@ const TYPE_ROLE = {
 }
 
 const BASE_HISTORY = [
-	{ role: TYPE_ROLE.SYSTEM, content: "Ты помощник через консоль."}
+	{ role: TYPE_ROLE.SYSTEM, content: "I'm GPT4-turbo working now through the telegram interface as a chat bot"}
 ]
 
 class MessageHistory{
