@@ -8,14 +8,19 @@ const TYPE_ROLE = {
 class MessageHistory{
 	constructor(){
 		this.history = []
+		this.fullHistory = []
 	}
 	getHistory(){
 		return this.history
+	}
+	getAllHistory(){
+		return this.fullHistory
 	}
 	clear(){
 		this.history = []
 	}
 	pushMessage(role, message){
+		this.fullHistory.push({ role, content: message })
 		this.history.push({ role, content: message })
 	}
 	pushUser(message){
