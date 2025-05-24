@@ -11,6 +11,10 @@ Steps:
 
 Just possibility chatting with GPT in console.
 
+#### Done
+
+I can chating with gpt throw console
+
 ## Tech
 
 Needs:

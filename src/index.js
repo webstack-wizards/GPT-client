@@ -12,9 +12,8 @@ const init = async () => {
 		history: historyMessages
 	})
 
-	let lastAnswer = "What you want to ask?"
 	while (true) {
-		const result = await myCosnole.question(lastAnswer)
+		const result = await myCosnole.question("User message:")
 		
 		if(!result){
 			continue
@@ -26,6 +25,7 @@ const init = async () => {
 		}
 		if(result === "new"){
 			historyMessages.clear()
+			console.log("Chat cleared, now you have new context.")
 			continue
 		}
 
@@ -38,10 +38,11 @@ const init = async () => {
 			}
 
 			if(answerGPT.choices.length !== 1){
-				console.log('more then one choise')
+				console.log('More then one choise!')
 			}
 			
-			lastAnswer = answerGPT.choices[0].message.content
+			// gpt answer 
+			console.log(`\n\nGPT:\n${answerGPT.choices[0].message.content}\n\n`)
 			historyMessages.pushAssistant(answerGPT.choices[0].message.content)
 		} catch (error) {
 			break
