@@ -1,16 +1,18 @@
 import MyGPT from "./ClientGPT.js"
 import MessageHistory from "./MessageHistory.js"
 import MyConsole from "./MyConsole.js"
+import TelegramBot from "node-telegram-bot-api"
 
 // console.log(process.env.OPEN_AI_API_KEY)
 
-const init = async () => {
+const initConsole = async () => {
 	const historyMessages = new MessageHistory()
 	const myCosnole = new MyConsole(historyMessages)
 	const myGPT = new MyGPT({
 		apiKey: process.env.OPEN_AI_API_KEY, 
 		history: historyMessages
 	})
+
 
 	while (true) {
 		const result = await myCosnole.question("User message:")
@@ -49,12 +51,26 @@ const init = async () => {
 		}
 
 	}
-
 	myCosnole.close()
-	// console.log()
-
 	console.log(historyMessages.getHistory())
-	// setTimeout(() => {}, 4000);
 }
 
-init()
+const initTelegram = () => {
+	const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: true})
+	bot.on("message", (msg) => {
+		const chatId = msg.chat.id;
+		const messageText = msg.text
+		const userID = msg.from.id
+
+		console.log(String(userID) !== process.env.ADMIN_TELEGRAM_ID, userID, process.env.ADMIN_TELEGRAM_ID)
+		if(String(userID) !== process.env.ADMIN_TELEGRAM_ID) return
+		console.log(msg)
+
+		if(messageText === '/start'){
+			bot.sendMessage(chatId, "Welcome to monkey forest!")
+		}
+	})
+}
+
+
+initTelegram()
