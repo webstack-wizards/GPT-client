@@ -3,3 +3,4 @@ node_modules
 .gitignore
 .github
 .env
+logs/history-*.json
