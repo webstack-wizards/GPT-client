@@ -17,7 +17,7 @@ class MyGPT {
 
 	initGPT(apiKey){
 		this.openAI = new OpenAI({
-			apiKey: apiKey
+			apiKey
 		})
 	}
 

@@ -7,6 +7,7 @@ const initTelegram = () => {
 	const chats = {}
 
 	const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: true})
+
 	bot.on("message", async (msg) => {
 		const chatId = msg.chat.id;
 		const messageText = msg.text
@@ -15,7 +16,7 @@ const initTelegram = () => {
 		if(String(userID) !== process.env.ADMIN_TELEGRAM_ID) return
 
 		if(messageText === '/start'){
-			const historyMessages = new MessageHistory()
+			const historyMessages = new MessageHistory({save: true})
 			chats[chatId] = {
 				chatId,
 				historyMessages,
@@ -27,6 +28,8 @@ const initTelegram = () => {
 			
 			bot.sendMessage(chatId, "Чат успішно створений")
 		}
+
+		console.log(msg)
 
 		const chat = chats[chatId]
 		if(!chat) return
@@ -51,10 +54,10 @@ const initTelegram = () => {
 			}
 		} else {
 			chat.historyMessages.pushUser(messageText)
-			const answerGPT = await chat.myGPT.ask()
+			// // const answerGPT = await chat.myGPT.ask()
 
-			bot.sendMessage(chat.chatId, answerGPT.choices[0].message.content)
-			chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
+			// bot.sendMessage(chat.chatId, answerGPT.choices[0].message.content)
+			// chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
 		}
 		console.log(messageText)
 	})
