@@ -28,18 +28,7 @@ export function downloadFile (url, fileName){
 	})
 }
 
-// export function downloadFile(url, fileName) {
-//   return new Promise((resolve, reject) => {
-//     const fileStream = fs.createWriteStream(`./files/${fileName}`);
-//     const stream = request(url)
-//       .pipe(fileStream)
-//       .on("finish", () => {
-//         console.log(`File ${fileName} downloaded!`);
-//         resolve(); // Файл успешно загружен
-//       })
-//       .on("error", (err) => {
-//         console.error("Error while downloading:", err);
-//         reject(err); // Ошибка при скачивании
-//       });
-//   });
-// }
+export function transformeImageToBase64 (nameFile) {
+	const fileData = fs.readFileSync(`./files/${nameFile}`, { encoding: "base64" });
+	return `data:image/jpeg;base64,${fileData}`;
+}

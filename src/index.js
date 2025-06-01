@@ -1,5 +1,5 @@
 import MyGPT from "./ClientGPT.js"
-import { downloadFile, writeFile } from "./helpers.js";
+import { downloadFile, transformeImageToBase64, writeFile } from "./helpers.js";
 import MessageHistory from "./MessageHistory.js"
 import TelegramBot from "node-telegram-bot-api"
 
@@ -76,6 +76,7 @@ async function workerCommand ({msg, chats, bot}){
 			gettingFiles: false,
 			allFiles: [],
 			messageFiles: [],
+			hotFiles: null,
 			clearHistory:	function () {
 				this.messageFiles = []
 			},
@@ -120,9 +121,8 @@ async function workerCommand ({msg, chats, bot}){
 		case "/closefiles":
 			chat.closeSession()
 			bot.sendMessage(chatId, "Файли готуються, трохи підождіть")
-			const listResult = await Promise.all(chat.messageFiles.map(preImage => bot.getFile(preImage.file_id)).map((promImage) => getterFile(promImage)))
+			chat.hotFiles = await Promise.all(chat.messageFiles.map(preImage => bot.getFile(preImage.file_id)).map((promImage) => getterFile(promImage)))
 			bot.sendMessage(chatId, "Файли готові, можете писати промпт")
-			console.log(listResult)
 			break;
 		default:
 			bot.sendMessage(chatId, "Команда")
@@ -130,7 +130,7 @@ async function workerCommand ({msg, chats, bot}){
 	}
 }
 
-function workerTextGPT ({msg, chats, bot}){
+async function workerTextGPT ({msg, chats, bot}){
 	const chatID = msg.chat.id
 	const chat = chats[chatID]
 	console.log("onTexting")
@@ -138,12 +138,16 @@ function workerTextGPT ({msg, chats, bot}){
 
 	console.log("testing")
 	const messageText = msg.text
-	chat.historyMessages.pushUser(messageText)
-	// // const answerGPT = await chat.myGPT.ask()
+	if(!chat.hotFiles){
+		chat.historyMessages.pushUser(messageText)
+	} else {
+		chat.historyMessages.pushMessageWithImage("user", messageText, chat.hotFiles.map(url => transformeImageToBase64(url)))
+	}
+	const answerGPT = await chat.myGPT.ask()
 
-	// bot.sendMessage(chatID, answerGPT.choices[0].message.content)
-	// chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
-	bot.sendMessage(chatID, "Текст")
+	bot.sendMessage(chatID, answerGPT.choices[0].message.content)
+	chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
+	// bot.sendMessage(chatID, "Текст")
 }
 
 

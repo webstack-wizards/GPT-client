@@ -28,6 +28,23 @@ class MessageHistory{
 	clear(){
 		this.history = [...this.baseHistory]
 	}
+	pushMessageWithImage(role, message, urlFiles){
+		const messageObj = {
+			role,
+			content: [
+				{ type: "text", text: message },
+			]
+		}
+
+		messageObj.content = [...messageObj.content, ...urlFiles.map(url => ({ type: "image_url", image_url: {url}}))]
+
+
+		this.fullHistory.push(messageObj)
+		this.history.push(messageObj)
+		if(this.saveHistory){
+			writeFile(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
+		}
+	}
 	pushMessage(role, message){
 		this.fullHistory.push({ role, content: message })
 		this.history.push({ role, content: message })
