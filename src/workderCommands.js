@@ -34,9 +34,13 @@ export async function workerCommand ({msg, chats, bot}){
 			break;
 		case "/closefiles":
 			chat.endFilesSession()
-			bot.sendMessage(chatID, "Файли готуються, трохи підождіть")
-			chat.hotFiles = await Promise.all(chat.messageFiles.map(preImage => bot.getFile(preImage.file_id)).map((promImage) => getterFile(promImage)))
-			bot.sendMessage(chatID, "Файли готові, можете писати промпт")
+			if(chat.messageFiles.length < 1){
+				bot.sendMessage(chatID, "Окей без файлів")
+			} else {
+				bot.sendMessage(chatID, "Файли готуються, трохи підождіть")
+				chat.hotFiles = await Promise.all(chat.messageFiles.map(preImage => bot.getFile(preImage.file_id)).map((promImage) => getterFile(promImage)))
+				bot.sendMessage(chatID, "Файли готові, можете писати промпт")
+			}
 			break;
 		default:
 			bot.sendMessage(chatID, "Цієї команди не знаю")

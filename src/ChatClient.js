@@ -26,6 +26,7 @@ export class Chat {
 	};
 	clearFiles = function () {
 		this.messageFiles = []
+		this.hotFiles = null
 	};
 	getStatusFiles = function (){
 		return this.gettingFiles;
