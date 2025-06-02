@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api"
-import { workerCommand } from "./workderCommands"
-import { workerTextGPT } from "./workerText"
+import { workerCommand } from "./workderCommands.js"
+import { workerTextGPT } from "./workerText.js"
 
 
 

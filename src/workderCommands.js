@@ -1,4 +1,4 @@
-import { ADMIN_ID, getterFile } from "./helpers";
+import { ADMIN_ID, getterFile } from "./helpers.js";
 import { Chat } from "./ChatClient.js";
 
 

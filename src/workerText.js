@@ -1,4 +1,4 @@
-import {transformeImageToBase64} from "./helpers";
+import {transformeImageToBase64} from "./helpers.js";
 
 export async function workerTextGPT ({msg, chats, bot}){
 	const chatID = msg.chat.id
