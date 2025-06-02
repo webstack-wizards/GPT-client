@@ -1,7 +1,4 @@
 import fs from "fs";
-import http from "http";
-import https from "https";
-import path, { resolve } from "path";
 import request from "request";
 
 export function taskDate(timestamp) {
@@ -11,7 +8,7 @@ export function taskDate(timestamp) {
 }
 
 export function writeFile (data, timestamp = Date.now()) {
-	fs.writeFileSync(`./logs/history-${taskDate(timestamp)}.json`, data);
+	fs.writeFileSync(`./logs/history-${timestamp}.json`, data);
 }
 
 export function downloadFile (url, fileName){

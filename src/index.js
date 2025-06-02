@@ -3,6 +3,8 @@ import { downloadFile, transformeImageToBase64, writeFile } from "./helpers.js";
 import MessageHistory from "./MessageHistory.js"
 import TelegramBot from "node-telegram-bot-api"
 
+const ADMIN_ID = process.env.ADMIN_TELEGRAM_ID
+
 const placeHOlder = [
   {
     file_id: 'AgACAgIAAxkBAAIBoGg8vaWbJGsbYW_3qfjsLlmq1g8BAAJt9DEbcdLgSWoEdnvk0EwcAQADAgADeQADNgQ',
@@ -49,6 +51,45 @@ const placeHOlder = [
 ]
 const PHOTO_ID = "AgACAgIAAxkBAAIBnWg8rRhKdc3ASwy1383aFwjGS_IkAAIR9DEbcdLgSeQaEnDuRhIdAQADAgADeAADNgQ"
 
+class Chat {
+	chatID = null;
+	historyMessages = null;
+	myGPT = null;
+	gettingFiles = false;
+	allFiles = [];
+	messageFiles = [];
+	hotFiles = null;
+
+	constructor({chatID, saving = true}){
+		this.chatID = chatID;
+		this.historyMessages = new MessageHistory({save: saving});
+		this.myGPT = new MyGPT({
+			apiKey: process.env.OPEN_AI_API_KEY, 
+			history: this.historyMessages
+		});
+	}
+
+	// working with sending photos
+	addFile = function (obj) {
+		this.allFiles.push(obj)
+		this.messageFiles.push(obj)
+	};
+	clearFiles = function () {
+		this.messageFiles = []
+	};
+	getStatusFiles = function (){
+		return this.gettingFiles;
+	};
+	startFileSession = function () {
+		this.gettingFiles = true
+	};
+	endFilesSession = function () {
+		this.gettingFiles = false
+	}
+	// end working with sending photos
+}
+
+
 async function getterFile (data) {
 	const dataImage = await data
 	const format = dataImage.file_path.match(/(?<=\.)\w*$/)?.[0]
@@ -57,7 +98,7 @@ async function getterFile (data) {
 }
 
 async function workerCommand ({msg, chats, bot}){
-	const chatId = msg.chat.id;
+	const chatID = msg.chat.id;
 	const userID = msg.from.id
 	const messageText = msg.text
 	if(String(userID) !== ADMIN_ID) return
@@ -65,67 +106,39 @@ async function workerCommand ({msg, chats, bot}){
 	if(!messageText) return 
 
 	if(messageText === '/start'){
-		const historyMessages = new MessageHistory({save: true})
-		chats[chatId] = {
-			chatId,
-			historyMessages,
-			myGPT: new MyGPT({
-				apiKey: process.env.OPEN_AI_API_KEY, 
-				history: historyMessages
-			}),
-			gettingFiles: false,
-			allFiles: [],
-			messageFiles: [],
-			hotFiles: null,
-			clearHistory:	function () {
-				this.messageFiles = []
-			},
-			getStatus: function (){
-				return this.gettingFiles
-			},
-			addFile: function (obj) {
-				this.allFiles.push(obj)
-				this.messageFiles.push(obj)
-			},
-			openSession: function () {
-				this.gettingFiles = true
-			},
-			closeSession: function () {
-				this.gettingFiles = false
-			}
-		}
-		
-		return bot.sendMessage(chatId, "Чат успішно створений")
+		const historyMessages = 
+		chats[chatID] = new Chat ({chatID})
+		return bot.sendMessage(chatID, "Чат успішно створений")
 	} 
 
 	if(String(userID) !== ADMIN_ID) return
 
-	const chat = chats[chatId]
+	const chat = chats[chatID]
 	if(!chat) return
 	
 	switch (messageText) {
 		case "/history":
 			
-			bot.sendMessage(chatId, "Готується істрія ції сессії")
-			bot.sendMessage(chatId, JSON.stringify(chat.historyMessages.getHistory(), null, 4))
-			bot.sendMessage(chatId, "Це вся історія цієї сессії") 
+			bot.sendMessage(chatID, "Готується істрія ції сессії")
+			bot.sendMessage(chatID, JSON.stringify(chat.historyMessages.getHistory(), null, 4))
+			bot.sendMessage(chatID, "Це вся історія цієї сессії") 
 			break;
 		case "/new":
 		case "/reset":
 			chat.historyMessages.clear()
-			bot.sendMessage(chatId, "Контекст успішно видалений")
+			bot.sendMessage(chatID, "Контекст успішно видалений")
 			break;
 		case "/openfiles":
-			chat.openSession()
+			chat.startFileSession()
 			break;
 		case "/closefiles":
-			chat.closeSession()
-			bot.sendMessage(chatId, "Файли готуються, трохи підождіть")
+			chat.endFilesSession()
+			bot.sendMessage(chatID, "Файли готуються, трохи підождіть")
 			chat.hotFiles = await Promise.all(chat.messageFiles.map(preImage => bot.getFile(preImage.file_id)).map((promImage) => getterFile(promImage)))
-			bot.sendMessage(chatId, "Файли готові, можете писати промпт")
+			bot.sendMessage(chatID, "Файли готові, можете писати промпт")
 			break;
 		default:
-			bot.sendMessage(chatId, "Команда")
+			bot.sendMessage(chatID, "Команда")
 			break;
 	}
 }
@@ -133,26 +146,22 @@ async function workerCommand ({msg, chats, bot}){
 async function workerTextGPT ({msg, chats, bot}){
 	const chatID = msg.chat.id
 	const chat = chats[chatID]
-	console.log("onTexting")
 	
-
-	console.log("testing")
 	const messageText = msg.text
 	if(!chat.hotFiles){
 		chat.historyMessages.pushUser(messageText)
 	} else {
 		chat.historyMessages.pushMessageWithImage("user", messageText, chat.hotFiles.map(url => transformeImageToBase64(url)))
+		chat.clearFiles()
 	}
 	const answerGPT = await chat.myGPT.ask()
 
 	bot.sendMessage(chatID, answerGPT.choices[0].message.content)
 	chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
-	// bot.sendMessage(chatID, "Текст")
 }
 
 
 
-const ADMIN_ID = process.env.ADMIN_TELEGRAM_ID
 
 const initTelegram = () => {
 	const chats = {}
@@ -170,8 +179,8 @@ const initTelegram = () => {
 		if(!chat) return 
 
 
-		if(chat.getStatus()) {
-			console.log('files', chat.getStatus())
+		if(chat.getStatusFiles()) {
+			console.log('files', chat.getStatusFiles())
 			if(msg.photo){
 				const objPhoto = msg.photo[msg.photo.length - 1]
 				chat.addFile(objPhoto)
