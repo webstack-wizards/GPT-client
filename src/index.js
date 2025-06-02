@@ -10,9 +10,9 @@ const initFaceRequest = async () => {
 
 	const answerGPT = await chat.myGPT.ask()
 	const content = answerGPT.choices[0].message.content
-
 	// bot.sendMessage(FAKE_ID, content)
 	chat.historyMessages.pushAssistant(answerGPT)
+
 }
 // initFaceRequest()
 
@@ -41,7 +41,6 @@ const initTelegram = () => {
 
 		if(msg.text) return workerTextGPT({msg, chats, bot})
 	})
-	return "some"
 }
 
 initTelegram()
