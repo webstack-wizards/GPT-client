@@ -4,3 +4,6 @@ node_modules
 .github
 .env
 logs/history-*.json
+
+files/*
+!files/*.md
