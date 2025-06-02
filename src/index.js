@@ -1,8 +1,20 @@
 import TelegramBot from "node-telegram-bot-api"
 import { workerCommand } from "./workderCommands.js"
 import { workerTextGPT } from "./workerText.js"
+import { Chat } from "./ChatClient.js"
 
+const FAKE_ID = 'faijefoiajefo'
 
+const initFaceRequest = async () => {
+	const chat = new Chat({chatID: FAKE_ID})
+
+	const answerGPT = await chat.myGPT.ask()
+	const content = answerGPT.choices[0].message.content
+
+	// bot.sendMessage(FAKE_ID, content)
+	chat.historyMessages.pushAssistant(answerGPT)
+}
+// initFaceRequest()
 
 const initTelegram = () => {
 	const chats = {}

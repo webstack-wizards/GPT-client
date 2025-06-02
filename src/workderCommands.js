@@ -42,6 +42,19 @@ export async function workerCommand ({msg, chats, bot}){
 				bot.sendMessage(chatID, "Файли готові, можете писати промпт")
 			}
 			break;
+		case "/cost":
+				bot.sendMessage(chatID, JSON.stringify({
+					lastMessage: chat.historyMessages.getCost(),
+					sessionMessage: chat.historyMessages.getCost(),
+					allMessage: chat.historyMessages.getCost()
+				}, null, 4))
+		case "/testing":
+			// const answerGPT = await chat.myGPT.ask()
+			// const content = answerGPT.choices[0].message.content
+
+			// bot.sendMessage(chatID, content)
+			// chat.historyMessages.pushAssistant(content)
+			// break;
 		default:
 			bot.sendMessage(chatID, "Цієї команди не знаю")
 			break;

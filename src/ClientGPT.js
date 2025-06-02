@@ -75,7 +75,10 @@ const EXAMPLES = [
 		choices: [
 			{
 				index: 0,
-				message: [Object],
+				message: {
+					"role": "assistant",
+					"content": "Это вид на город Киев, столицу Украины. Здесь видны характерные места, такие как мост через реку Днепр и вид на Подол, один из исторических районов города."
+				},
 				logprobs: null,
 				finish_reason: 'stop'
 			}
@@ -103,7 +106,10 @@ const EXAMPLES = [
 		choices: [
 			{
 				index: 0,
-				message: [Object],
+				message: {
+					"role": "assistant",
+					"content": "По изображению видно, что небо облачное с просветами, что указывает на переменчивую погоду. На реке Днепр нет льда, что может указывать на относительно теплую погоду для зимнего или ранневесеннего периода. Однако для точного ответа о погоде в Киеве в настоящий момент, я рекомендую проверить актуальный прогноз в интернете или погодных приложениях."
+				},
 				logprobs: null,
 				finish_reason: 'stop'
 			}
@@ -140,12 +146,7 @@ class MyGPT {
 
 	async ask(){
 		try {
-			const result = this.openAI.chat.completions.create({
-				model: SETTINGS.MODEL,
-				messages: this.history.getHistory()
-			})
-			console.log(await result)
-
+			const result = EXAMPLES[EXAMPLES.length - 1]
 			return result
 
 			// return this.openAI.chat.completions.create({
