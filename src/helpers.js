@@ -1,6 +1,8 @@
 import fs from "fs";
 import request from "request";
 
+export const ADMIN_ID = process.env.ADMIN_TELEGRAM_ID
+
 export function taskDate(timestamp) {
 	const date = new Date(timestamp);
 	const formattedDate = date.toISOString().split('T')[0];
