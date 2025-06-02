@@ -14,7 +14,7 @@ const initTelegram = () => {
 	})
 	
 	bot.on("message", async (msg) => {
-		if(/(?=\/)/.test(msg?.text)) return workerCommand({msg, chats, bot})
+		if(/^\//.test(msg?.text)) return workerCommand({msg, chats, bot})
 		
 		const chat = chats[msg.chat.id]
 		if(!chat) return 

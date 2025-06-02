@@ -15,8 +15,6 @@ export async function workerCommand ({msg, chats, bot}){
 		return bot.sendMessage(chatID, "Чат успішно створений")
 	} 
 
-	if(String(userID) !== ADMIN_ID) return
-
 	const chat = chats[chatID]
 	if(!chat) return
 	
