@@ -25,6 +25,14 @@ export function downloadFile (url, fileName){
 	})
 }
 
+export async function getterFile (data) {
+	const dataImage = await data
+	const format = dataImage.file_path.match(/(?<=\.)\w*$/)?.[0]
+	// // place for error
+	return downloadFile(`http://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN}/${dataImage.file_path}`, `${dataImage.file_unique_id}.${format}`)
+}
+
+
 export function transformeImageToBase64 (nameFile) {
 	const fileData = fs.readFileSync(`./files/${nameFile}`, { encoding: "base64" });
 	return `data:image/jpeg;base64,${fileData}`;
