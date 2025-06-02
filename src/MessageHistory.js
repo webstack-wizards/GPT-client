@@ -28,7 +28,21 @@ function resucerCosts (a, b){
 	}
 }
 function getterCosts(arrayMessage) {
-	return arrayMessage.filter(message => message.role === "assistant" && !!message.cost).reduce(resucerCosts)
+	return arrayMessage.filter(message => message.role === "assistant" && !!message.cost).map(msg => msg.cost).reduce(resucerCosts, {
+		"prompt_tokens": 0,
+		"completion_tokens": 0,
+		"total_tokens": 0,
+		"prompt_tokens_details": {
+			"cached_tokens": 0,
+			"audio_tokens": 0
+		},
+		"completion_tokens_details": {
+			"reasoning_tokens": 0,
+			"audio_tokens": 0,
+			"accepted_prediction_tokens": 0,
+			"rejected_prediction_tokens": 0
+		}
+	})
 }
 
 class MessageHistory{

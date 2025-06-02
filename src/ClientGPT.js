@@ -146,13 +146,13 @@ class MyGPT {
 
 	async ask(){
 		try {
-			const result = EXAMPLES[EXAMPLES.length - 1]
-			return result
+			// const result = EXAMPLES[EXAMPLES.length - 1]
+			// return result
 
-			// return this.openAI.chat.completions.create({
-			// 	model: SETTINGS.MODEL,
-			// 	messages: this.history.getHistory()
-			// })
+			return this.openAI.chat.completions.create({
+				model: SETTINGS.MODEL,
+				messages: this.history.getHistory()
+			})
 		} catch (error) {
 			console.log(error)
 			return false

@@ -12,4 +12,13 @@ export async function workerTextGPT ({msg, chats, bot}){
 		chat.clearFiles()
 	}
 
+	const answerGPT = await chat.myGPT.ask()
+
+	try {
+		bot.sendMessage(chatID, answerGPT.choices[0].message.content)
+		chat.historyMessages.pushAssistant(answerGPT)
+	} catch (error) {
+		console.log(answerGPT)
+	}
+
 }
