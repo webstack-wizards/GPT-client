@@ -61,8 +61,12 @@ async function workerTextGPT ({msg, chats, bot}){
 	}
 	const answerGPT = await chat.myGPT.ask()
 
-	bot.sendMessage(chatID, answerGPT.choices[0].message.content)
-	chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
+	try {
+		bot.sendMessage(chatID, answerGPT.choices[0].message.content)
+		chat.historyMessages.pushAssistant(answerGPT.choices[0].message.content)
+	} catch (error) {
+		console.log(answerGPT)
+	}
 }
 
 
@@ -76,22 +80,26 @@ const initTelegram = () => {
 	})
 	
 	bot.on("message", async (msg) => {
-		if(/(?=\/)/.test(msg?.text)) return workerCommand({msg, chats, bot})
-		
-		const chat = chats[msg.chat.id]
-		if(!chat) return 
+		try {
+			if(/(?=\/)/.test(msg?.text)) return workerCommand({msg, chats, bot})
+			
+			const chat = chats[msg.chat.id]
+			if(!chat) return 
 
-		if(chat.getStatusFiles()) {
-			console.log('files', chat.getStatusFiles())
-			if(msg.photo){
-				const objPhoto = msg.photo[msg.photo.length - 1]
-				chat.addFile(objPhoto)
+			if(chat.getStatusFiles()) {
+				console.log('files', chat.getStatusFiles())
+				if(msg.photo){
+					const objPhoto = msg.photo[msg.photo.length - 1]
+					chat.addFile(objPhoto)
+				}
 			}
-		}
 
-		if(msg.text) return workerTextGPT({msg, chats, bot})
+			if(msg.text) return workerTextGPT({msg, chats, bot})
+		} catch (error) {
+			console.log(error)
+			console.log(chats[msg.chat.id])
+		}
 	})
-	return "some"
 }
 
 initTelegram()
