@@ -11,6 +11,7 @@ services:
       ADMIN_TELEGRAM_ID: ${ADMIN_TELEGRAM_ID}
     volumes:
       - telegram-logs:/app/logs
+    restart: always
 
 volumes:
   telegram-logs:
