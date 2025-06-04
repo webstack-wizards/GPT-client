@@ -7,7 +7,7 @@ const TYPE_ROLE = {
 }
 
 const BASE_HISTORY = [
-	{ role: TYPE_ROLE.SYSTEM, content: "I'm GPT4-turbo working now through the telegram interface as a chat bot"}
+	{ role: TYPE_ROLE.SYSTEM, content: "I'm GPT4-turbo working now through the telegram interface with Markdown mode"}
 ]
 
 function resucerCosts (a, b){
@@ -16,14 +16,14 @@ function resucerCosts (a, b){
 		"completion_tokens": a.completion_tokens + b.completion_tokens,
 		"total_tokens": a.total_tokens + b.total_tokens,
 		"prompt_tokens_details": {
-			"cached_tokens": a.cached_tokens + b.cached_tokens,
-			"audio_tokens": a.audio_tokens + b.audio_tokens
+			"cached_tokens": a.prompt_tokens_details.cached_tokens + b.prompt_tokens_details.cached_tokens,
+			"audio_tokens": a.prompt_tokens_details.audio_tokens + b.prompt_tokens_details.audio_tokens
 		},
 		"completion_tokens_details": {
-			"reasoning_tokens": a.reasoning_tokens + b.reasoning_tokens,
-			"audio_tokens": a.audio_tokens + b.audio_tokens,
-			"accepted_prediction_tokens": a.accepted_prediction_tokens + b.accepted_prediction_tokens,
-			"rejected_prediction_tokens": a.rejected_prediction_tokens + b.rejected_prediction_tokens
+			"reasoning_tokens": a.completion_tokens_details.reasoning_tokens + b.completion_tokens_details.reasoning_tokens,
+			"audio_tokens": a.completion_tokens_details.audio_tokens + b.completion_tokens_details.audio_tokens,
+			"accepted_prediction_tokens": a.completion_tokens_details.accepted_prediction_tokens + b.completion_tokens_details.accepted_prediction_tokens,
+			"rejected_prediction_tokens": a.completion_tokens_details.rejected_prediction_tokens + b.completion_tokens_details.rejected_prediction_tokens
 		}
 	}
 }
