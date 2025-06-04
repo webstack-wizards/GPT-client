@@ -1,15 +1,5 @@
 import OpenAI from "openai"
-
-const MODELS = {
-	"gpt-4o": "gpt-4o",
-	"gpt-4-turbo": "gpt-4-turbo"
-}
-
-const SETTINGS = {
-	MODEL: MODELS["gpt-4-turbo"]
-}
-
-
+import { SETTINGS } from "./helpers"
 
 
 class MyGPT {
@@ -26,13 +16,12 @@ class MyGPT {
 
 	async ask(){
 		try {
-			// const result = EXAMPLES[EXAMPLES.length - 1]
-			// return result
-
-			return this.openAI.chat.completions.create({
-				model: SETTINGS.MODEL,
+			const settingsMessage = {
+				model: SETTINGS.gptModel,
 				messages: this.history.getHistory()
-			})
+			}
+
+			return this.openAI.chat.completions.create(settingsMessage)
 		} catch (error) {
 			console.log(error)
 			return false

@@ -7,7 +7,7 @@ const TYPE_ROLE = {
 }
 
 const BASE_HISTORY = [
-	{ role: TYPE_ROLE.SYSTEM, content: "I'm GPT4-turbo working now through the telegram interface with Markdown mode"}
+	{ role: TYPE_ROLE.SYSTEM, content: SETTINGS.basePrompt}
 ]
 
 function resucerCosts (a, b){

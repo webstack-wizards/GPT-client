@@ -1,6 +1,7 @@
 import fs from "fs";
 import request from "request";
-import path from "path"
+import path from "path";
+
 
 const rootPath = process.cwd()
 
@@ -11,10 +12,14 @@ function checkDir(route) {
 
 export function writeFile ({data, name = `${Date.now()}.txt`, route = "/logs/other"}) {
 	checkDir(route)
-	fs.writeFileSync(path.join(rootPath, route, name), data)
+	return fs.writeFileSync(path.join(rootPath, route, name), data)
 }
 
+export function readFile ({name, route = "/"}){
+	return fs.readFileSync(path.join(rootPath, route, name))
+}
 
+export const SETTINGS = JSON.parse(readFile({name: "settings.json"}))
 
 export const ADMIN_ID = process.env.ADMIN_TELEGRAM_ID
 
