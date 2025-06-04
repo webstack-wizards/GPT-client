@@ -1,5 +1,4 @@
 .env*
 node_modules
-logs/history-*.json
-files/*
-!files/*.md
+logs
+files

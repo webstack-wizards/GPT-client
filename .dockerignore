@@ -3,7 +3,7 @@ node_modules
 .gitignore
 .github
 .env*
-logs/history-*.json
 
-files/*
-!files/*.md
+
+logs
+files

@@ -1,5 +1,20 @@
 import fs from "fs";
 import request from "request";
+import path from "path"
+
+const rootPath = process.cwd()
+
+function checkDir(route) {
+	const createdRoute = path.join(rootPath, route)
+	fs.mkdirSync(createdRoute, { recursive: true })
+}
+
+export function writeFile ({data, name = `${Date.now()}.txt`, route = "/logs/other"}) {
+	checkDir(route)
+	fs.writeFileSync(path.join(rootPath, route, name), data)
+}
+
+
 
 export const ADMIN_ID = process.env.ADMIN_TELEGRAM_ID
 
@@ -9,13 +24,17 @@ export function taskDate(timestamp) {
 	return formattedDate
 }
 
-export function writeFile (data, timestamp = Date.now()) {
-	fs.writeFileSync(`./logs/history-${timestamp}.json`, data);
+export function writeFileHistory (data, timestamp = Date.now()){
+	writeFile({
+		data,
+		route: "/logs/histories",
+		name: `${timestamp}.json`
+	})
 }
-
 export function downloadFile (url, fileName){
 	return new Promise((resolve, reject) => {
 		request.head(url, (err, res, body) => {
+			checkDir("/files")
 			request(url)
 			.pipe(
 				fs.createWriteStream(`./files/${fileName}`)

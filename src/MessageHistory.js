@@ -1,4 +1,4 @@
-import { writeFile } from "./helpers.js";
+import { writeFileHistory } from "./helpers.js";
 
 const TYPE_ROLE = {
 	USER: "user",
@@ -77,7 +77,7 @@ class MessageHistory{
 		this.fullHistory.push(messageObj)
 		this.history.push(messageObj)
 		if(this.saveHistory){
-			writeFile(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
+			writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
 		}
 	}
 	pushMessage({role, message, cost = null}){
@@ -91,7 +91,7 @@ class MessageHistory{
 		this.history.push(messageObj)
 
 		if(this.saveHistory){
-			writeFile(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
+			writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
 		}
 	}
 	pushUser(message){
