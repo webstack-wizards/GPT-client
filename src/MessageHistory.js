@@ -1,4 +1,4 @@
-import { writeFileHistory } from "./helpers.js";
+import { writeFileHistory, SETTINGS } from "./helpers.js";
 
 const TYPE_ROLE = {
 	USER: "user",

@@ -1,5 +1,5 @@
 import OpenAI from "openai"
-import { SETTINGS } from "./helpers"
+import { SETTINGS } from "./helpers.js"
 
 
 class MyGPT {
