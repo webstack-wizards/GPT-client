@@ -1,16 +1,7 @@
-import {  getterFile } from "./helpers.js";
+import { COMMANDS, getterFile } from "./helpers.js";
 import { Chat } from "./ChatClient.js";
 
-const COMMANDS = {
-	START: "/start",
-	HISTORY: "/history",
-  NEW: "/new",
-  RESET: "/reset",
-  OPEN_FILES: "/openfiles",
-  CLOSE_FILES: "/closefiles",
-  GET_COST: "/getcost",
-  TESTING: "/testing",
-}
+
 
 async function handleHistory(chat, bot, chatID){
 	bot.sendMessage(chatID, "Готується істрія ції сессії")
@@ -31,7 +22,8 @@ async function handleCLoseFiles(chat, bot, chatID) {
 
 export async function workerCommand ({msg, chats, bot}){
 	const chatID = msg.chat.id;
-	const messageText = msg.text
+	const messageText = msg.text;
+	
 
 	if(!messageText) return 
 

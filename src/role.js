@@ -1,0 +1,14 @@
+import { COMMANDS } from "./helpers.js";
+
+const CAND_ADMIN = ["TESTING"]
+
+export const roles = {
+	user: [
+		COMMANDS.START,
+		COMMANDS.HISTORY,
+		COMMANDS.NEW,
+		COMMANDS.GET_COST
+	],
+	admin: Object.keys().filter(item => CAND_ADMIN.some(name => name === item)).map(name => COMMANDS[name]),
+	creator: COMMANDS
+}
