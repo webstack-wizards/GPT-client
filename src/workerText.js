@@ -18,7 +18,6 @@ export async function workerTextGPT ({msg, chats, bot}){
 		bot.sendMessage(chatID, answerGPT.choices[0].message.content, {
 			parse_mode: "Markdown"
 		})
-		chat.historyMessages.pushAssistant(answerGPT)
 	} catch (error) {
 		console.log(answerGPT)
 	}

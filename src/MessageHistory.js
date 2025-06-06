@@ -49,7 +49,7 @@ class MessageHistory{
 	constructor(argObj){
 		const {history, save} = {history: BASE_HISTORY, save: false, ...argObj}
 		this.baseHistory = history;
-		this.saveHistory = save
+		this.savedHistory = save
 		this.createdDate = Date.now()
 		this.history = [...this.baseHistory]
 		this.fullHistory = [...this.baseHistory]
@@ -118,10 +118,14 @@ class MessageHistory{
 		return this.lastMessage
 	}
 
+	saveHistory(){
+		return writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
+	}
+
 	pushMessage(){
 		this.lastMessage = null
-		if(this.saveHistory){
-			writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
+		if(this.savedHistory){
+			this.saveHistory()
 		}
 	}
 	
