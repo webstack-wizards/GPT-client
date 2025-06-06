@@ -9,7 +9,7 @@ async function handleHistory(chat, bot, chatID){
 	bot.sendMessage(chatID, JSON.stringify(chat.historyMessages.getHistory(), null, 4))
 	bot.sendMessage(chatID, "That's the whole story of this session.") 
 }
-async function handleCLoseFiles(chat, bot, chatID) {
+async function handleCloseFiles(chat, bot, chatID) {
 	chat.endFilesSession()
 	if(chat.messageFiles.length < 1){
 		bot.sendMessage(chatID, "Okay, no files")
@@ -47,7 +47,7 @@ export async function workerCommand ({msg, chats, bot, user}){
 	
 	switch (messageText) {
 		case COMMANDS.HISTORY:
-			return handleHistory()
+			return handleHistory(chat, bot, chatID)
 		case COMMANDS.NEW:
 		case COMMANDS.RESET:
 			chat.historyMessages.clear()
@@ -57,7 +57,7 @@ export async function workerCommand ({msg, chats, bot, user}){
 			chat.startFileSession()
 			break;
 		case COMMANDS.CLOSE_FILES:
-			return handleCLoseFiles()
+			return handleCloseFiles(chat, bot, chatID)
 		case COMMANDS.GET_COST:
 			bot.sendMessage(chatID, JSON.stringify({
 				lastMessage: chat.historyMessages.getCost(),

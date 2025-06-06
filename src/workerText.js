@@ -8,7 +8,7 @@ export async function workerTextGPT ({msg, chats, bot}){
 	if(!chat.hotFiles){
 		chat.historyMessages.pushUser(messageText)
 	} else {
-		chat.historyMessages.pushMessageWithImage("user", messageText, chat.hotFiles.map(url => transformeImageToBase64(url)))
+		chat.historyMessages.pushUser(messageText, chat.hotFiles.map(url => transformeImageToBase64(url)))
 		chat.clearFiles()
 	}
 
