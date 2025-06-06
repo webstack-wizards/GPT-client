@@ -9,6 +9,6 @@ export const roles = {
 		COMMANDS.NEW,
 		COMMANDS.GET_COST
 	],
-	admin: Object.keys().filter(item => CAND_ADMIN.some(name => name === item)).map(name => COMMANDS[name]),
+	admin: Object.keys(COMMANDS).filter(item => !CAND_ADMIN.some(name => name === item)).map(name => COMMANDS[name]),
 	creator: COMMANDS
 }

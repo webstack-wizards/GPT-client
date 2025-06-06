@@ -1,5 +1,6 @@
-import { COMMANDS, getterFile } from "./helpers.js";
+import { COMMANDS, getterFile, SETTINGS } from "./helpers.js";
 import { Chat } from "./ChatClient.js";
+import { roles } from "./role.js";
 
 
 
@@ -20,16 +21,25 @@ async function handleCLoseFiles(chat, bot, chatID) {
 }
 
 
-export async function workerCommand ({msg, chats, bot}){
+export async function workerCommand ({msg, chats, bot, user}){
 	const chatID = msg.chat.id;
 	const messageText = msg.text;
-	
 
-	if(!messageText) return 
+	if(!messageText) return bot.sendMessag(chatID, `Wrong message ${messageText}`)
+
+	if (
+			!roles[user.role].includes(messageText) || 
+			(SETTINGS.supportImageJPEG === false &&
+				(messageText === COMMANDS.OPEN_FILES || messageText === COMMANDS.CLOSE_FILES)
+				)
+		) {
+    return bot.sendMessage(chatID, "You don't have rigth for using this command or this command switch off.");
+  }
+
 
 	if(messageText === COMMANDS.START){
 		chats[chatID] = new Chat ({chatID})
-		return bot.sendMessage(chatID, "Чат успішно створений")
+		return bot.sendMessage(chatID, "Chat successfully created")
 	} 
 
 	const chat = chats[chatID]
@@ -41,7 +51,7 @@ export async function workerCommand ({msg, chats, bot}){
 		case COMMANDS.NEW:
 		case COMMANDS.RESET:
 			chat.historyMessages.clear()
-			bot.sendMessage(chatID, "Контекст успішно видалений")
+			bot.sendMessage(chatID, "Contex cleared.")
 			break;
 		case COMMANDS.OPEN_FILES:
 			chat.startFileSession()
@@ -58,7 +68,7 @@ export async function workerCommand ({msg, chats, bot}){
 		case COMMANDS.TESTING:
 			
 		default:
-			bot.sendMessage(chatID, "Цієї команди не знаю")
+			bot.sendMessage(chatID, "Command not recognized")
 			break;
 	}
 }

@@ -18,8 +18,9 @@ const initTelegram = () => {
 	bot.on("message", async (msg) => {
 		const userID = msg.from.id;
 		const userData = userWorker.getUser(userID)
+
 		if(userData.role !== "admin") return
-		if(/^\//.test(msg?.text)) return workerCommand({msg, chats, bot})
+		if(/^\//.test(msg?.text)) return workerCommand({msg, chats, bot, user: userData})
 		
 		const chat = chats[msg.chat.id]
 		if(!chat) return 

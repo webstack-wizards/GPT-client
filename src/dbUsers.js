@@ -27,7 +27,7 @@ class DB_users {
 		writeFile({data: JSON.stringify(data), name: SETTINGS_USERS.nameFile, route: SETTINGS_USERS.routeFile})
 	}
 	getUser(id) {
-		return this.database.find(user => user.id === id)
+		return this.database.find(user => user.id === String(id))
 	}
 	addUser(id, role){
 		if(this.getUser(id)){
