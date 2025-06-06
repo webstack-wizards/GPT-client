@@ -3,7 +3,8 @@ import { writeFileHistory, SETTINGS } from "./helpers.js";
 const TYPE_ROLE = {
 	USER: "user",
 	SYSTEM: "system",
-	ASSISTANT: "assistant"
+	ASSISTANT: "assistant",
+	TOOL: "tool"
 }
 
 const BASE_HISTORY = [
@@ -129,6 +130,10 @@ class MessageHistory{
 		}
 	}
 	
+	pushToolResult(tool_call_id, content){
+		this.createMessage({role: TYPE_ROLE.TOOL, copy: {tool_call_id, content}})
+		this.pushMessage()
+	}
 	pushUser(message, urlFiles){
 		this.createMessage({role: TYPE_ROLE.USER, message, medias: urlFiles})
 		this.pushMessage()

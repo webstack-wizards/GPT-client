@@ -1,4 +1,29 @@
-import {transformeImageToBase64} from "./helpers.js";
+import {transformeImageToBase64, getWeather} from "./helpers.js";
+
+const toolsFn = {
+	tools: [
+		{
+			type: "function",
+			function: {
+					name: "get_weather",
+					description: "Get current temperature for provided coordinates in celsius.",
+					parameters: {
+							type: "object",
+							properties: {
+									latitude: { type: "number" },
+									longitude: { type: "number" }
+							},
+							required: ["latitude", "longitude"],
+							additionalProperties: false
+					},
+					strict: true
+			},
+		}
+	],
+	fns: {
+		get_weather: getWeather
+	}
+}
 
 export async function workerTextGPT ({msg, chats, bot}){
 	const chatID = msg.chat.id
@@ -12,7 +37,7 @@ export async function workerTextGPT ({msg, chats, bot}){
 		chat.clearFiles()
 	}
 
-	const answerGPT = await chat.myGPT.ask()
+	const answerGPT = await chat.myGPT.ask({toolsFn})
 
 	try {
 		bot.sendMessage(chatID, answerGPT.choices[0].message.content, {
