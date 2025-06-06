@@ -63,3 +63,14 @@ export function transformeImageToBase64 (nameFile) {
 	const fileData = fs.readFileSync(`./files/${nameFile}`, { encoding: "base64" });
 	return `data:image/jpeg;base64,${fileData}`;
 }
+
+export const COMMANDS = {
+	START: "/start",
+	HISTORY: "/history",
+  NEW: "/new",
+  RESET: "/reset",
+  OPEN_FILES: "/openfiles",
+  CLOSE_FILES: "/closefiles",
+  GET_COST: "/getcost",
+  TESTING: "/testing",
+}
