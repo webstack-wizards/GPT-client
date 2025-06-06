@@ -61,46 +61,77 @@ class MessageHistory{
 		return this.fullHistory
 	}
 	clear(){
+		this.lastMessage = null
 		this.history = [...this.baseHistory]
 	}
-	pushMessageWithImage(role, message, urlFiles){
-		const messageObj = {
-			role,
-			content: [
-				{ type: "text", text: message },
-			]
-		}
-
-		messageObj.content = [...messageObj.content, ...urlFiles.map(url => ({ type: "image_url", image_url: {url}}))]
-
-
-		this.fullHistory.push(messageObj)
-		this.history.push(messageObj)
-		if(this.saveHistory){
-			writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
+	addContentMessage(message){
+		const content = this.lastMessage.content
+		if(content){
+			content.push(message)
+		} else {
+			this.lastMessage.content = [message]
 		}
 	}
-	pushMessage({role, message, cost = null}){
-		const messageObj = { role, content: message }
-		
+
+	addText(message){
+		this.addContentMessage({
+			type: "text",
+			text: message
+		})
+	}
+	addMedias(urlFiles){
+		urlFiles.forEach(url => {
+			this.addContentMessage({
+				type: "image_url",
+				image_url: {url}
+			})	
+		});		
+	}
+	createMessage({role, message, medias, copy, cost}){
+		if(!copy){
+			this.lastMessage = { 
+				role,
+				content: null
+			}
+
+			if(!!message){
+				this.addText(message)
+			}
+			if(!!medias){
+				this.addMedias(medias)
+			}
+		} else {
+			this.lastMessage = copy
+		}
+
+		if(role){
+			this.lastMessage.role = role
+		}
 		if(cost){
-			messageObj.cost = cost
+			this.lastMessage.cost = cost
 		}
 
-		this.fullHistory.push(messageObj)
-		this.history.push(messageObj)
+		
+		this.fullHistory.push(this.lastMessage)
+		this.history.push(this.lastMessage)
+		
+		return this.lastMessage
+	}
 
+	pushMessage(){
+		this.lastMessage = null
 		if(this.saveHistory){
 			writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
 		}
 	}
-	pushUser(message){
-		this.pushMessage({role: TYPE_ROLE.USER, message})
+	
+	pushUser(message, urlFiles){
+		this.createMessage({role: TYPE_ROLE.USER, message, medias: urlFiles})
+		this.pushMessage()
 	}
 	pushAssistant (answerGPT){
-		const message = answerGPT.choices[0].message.content
-
-		this.pushMessage({role: TYPE_ROLE.ASSISTANT, message, cost: answerGPT.usage})
+		this.createMessage({copy: answerGPT.choices[0].message, role: TYPE_ROLE.ASSISTANT, cost: answerGPT.usage})
+		this.pushMessage()
 	}
 	getCost (type){
 		switch (type) {
