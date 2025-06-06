@@ -5,18 +5,18 @@ import { roles } from "./role.js";
 
 
 async function handleHistory(chat, bot, chatID){
-	bot.sendMessage(chatID, "Готується істрія ції сессії")
+	bot.sendMessage(chatID, "The history of this session is being prepared.")
 	bot.sendMessage(chatID, JSON.stringify(chat.historyMessages.getHistory(), null, 4))
-	bot.sendMessage(chatID, "Це вся історія цієї сессії") 
+	bot.sendMessage(chatID, "That's the whole story of this session.") 
 }
 async function handleCLoseFiles(chat, bot, chatID) {
 	chat.endFilesSession()
 	if(chat.messageFiles.length < 1){
-		bot.sendMessage(chatID, "Окей без файлів")
+		bot.sendMessage(chatID, "Okay, no files")
 	} else {
-		bot.sendMessage(chatID, "Файли готуються, трохи підождіть")
+		bot.sendMessage(chatID, "Files are being prepared, please wait a moment")
 		chat.hotFiles = await Promise.all(chat.messageFiles.map(preImage => bot.getFile(preImage.file_id)).map((promImage) => getterFile(promImage)))
-		bot.sendMessage(chatID, "Файли готові, можете писати промпт")
+		bot.sendMessage(chatID, "The files are ready, you can write the prompt.")
 	}
 }
 
@@ -51,7 +51,7 @@ export async function workerCommand ({msg, chats, bot, user}){
 		case COMMANDS.NEW:
 		case COMMANDS.RESET:
 			chat.historyMessages.clear()
-			bot.sendMessage(chatID, "Contex cleared.")
+			bot.sendMessage(chatID, "Context cleared.")
 			break;
 		case COMMANDS.OPEN_FILES:
 			chat.startFileSession()
