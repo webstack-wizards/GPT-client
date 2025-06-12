@@ -119,6 +119,15 @@ class MessageHistory{
 		return this.lastMessage
 	}
 
+	modificateTextMessage(text){
+		const textContent =	this.lastMessage.content.find(item => item.type === "text");
+		if(textContent){
+			textContent.text+=text
+			return textContent
+		} 
+		new Error("Not found text content")
+	}
+
 	saveHistory(){
 		return writeFileHistory(JSON.stringify({history: this.fullHistory}, null, 2), this.createdDate)
 	}
@@ -135,8 +144,12 @@ class MessageHistory{
 		this.pushMessage()
 	}
 	pushUser(message, urlFiles){
-		this.createMessage({role: TYPE_ROLE.USER, message, medias: urlFiles})
-		this.pushMessage()
+		if(!this.lastMessage){
+			this.createMessage({role: TYPE_ROLE.USER, message, medias: urlFiles})
+		} else {
+			this.modificateTextMessage(message)
+		}
+		// this.pushMessage()
 	}
 	pushAssistant (answerGPT){
 		this.createMessage({copy: answerGPT.choices[0].message, role: TYPE_ROLE.ASSISTANT, cost: answerGPT.usage})
