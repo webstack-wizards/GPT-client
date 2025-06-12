@@ -9,6 +9,7 @@ export class Chat {
 	allFiles = [];
 	messageFiles = [];
 	hotFiles = null;
+	waiting = null;
 
 	constructor({chatID, saving = true}){
 		this.chatID = chatID;

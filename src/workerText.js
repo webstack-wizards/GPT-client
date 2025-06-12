@@ -6,21 +6,33 @@ export async function workerTextGPT ({msg, chats, bot}){
 	const chat = chats[chatID]
 	
 	const messageText = msg.text
-	if(!chat.hotFiles){
-		chat.historyMessages.pushUser(messageText)
+	if(!chat.waiting){
+		if(!chat.hotFiles){
+			chat.historyMessages.pushUser(messageText)
+		} else {
+			chat.historyMessages.pushUser(messageText, chat.hotFiles.map(url => transformeImageToBase64(url)))
+			chat.clearFiles()
+		}
 	} else {
-		chat.historyMessages.pushUser(messageText, chat.hotFiles.map(url => transformeImageToBase64(url)))
-		chat.clearFiles()
+		clearTimeout(chat.waiting)
+		chat.historyMessages.pushUser(messageText)
 	}
 
-	const answerGPT = await chat.myGPT.ask()
 
-	try {
-		bot.sendMessage(chatID, answerGPT.choices[0].message.content, {
-			parse_mode: "Markdown"
-		})
-	} catch (error) {
-		console.log(answerGPT)
+	const askerGPT = async () => {
+		chat.historyMessages.pushMessage()
+		const answerGPT = await chat.myGPT.ask()
+
+		try {
+			bot.sendMessage(chatID, answerGPT.choices[0].message.content, {
+				parse_mode: "Markdown"
+			})
+		} catch (error) {
+			console.log(answerGPT)
+		}
+		chat.waiting = null
 	}
+
+	chat.waiting = setTimeout(askerGPT, 1000)
 
 }
