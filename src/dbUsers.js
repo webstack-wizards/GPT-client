@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "./helpers.js"
+import { readFile, writeFile } from "./helper/helper.js"
 
 const SETTINGS_USERS = {
 	nameFile: "users.json",

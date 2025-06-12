@@ -1,4 +1,4 @@
-import { COMMANDS, getterFile, SETTINGS } from "./helpers.js";
+import { COMMANDS, getterFile, SETTINGS } from "./helper/helper.js";
 import { Chat } from "./ChatClient.js";
 import { roles } from "./role.js";
 
@@ -38,8 +38,12 @@ export async function workerCommand ({msg, chats, bot, user}){
 
 
 	if(messageText === COMMANDS.START){
-		chats[chatID] = new Chat ({chatID})
-		return bot.sendMessage(chatID, "Chat successfully created")
+		if(chats[chatID]){
+			return bot.sendMessage(chatID, "Chat already initiated!")
+		} else {
+			chats[chatID] = new Chat ({chatID})
+			return bot.sendMessage(chatID, "Chat successfully created")
+		}
 	} 
 
 	const chat = chats[chatID]

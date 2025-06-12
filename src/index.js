@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api"
 import { workerCommand } from "./workderCommands.js"
 import { workerTextGPT } from "./workerText.js"
-import { ADMIN_ID, SETTINGS } from "./helpers.js"
+import { SETTINGS } from "./helper/helper.js"
 import DB_users from "./dbUsers.js"
 
 

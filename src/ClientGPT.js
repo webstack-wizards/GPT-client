@@ -1,6 +1,7 @@
 import OpenAI from "openai"
-import { SETTINGS, writeFile } from "./helpers.js"
-import MessageHistory from "./MessageHistory.js"
+import { SETTINGS, writeFile } from "./helper/helper.js"
+import { fakeResponceGPR } from "./helper/helperGPT.js"
+
 
 
 class MyGPT {
@@ -43,8 +44,10 @@ class MyGPT {
 				settingsMessage.tools = toolsFn.tools
 			}
 
-			const response = await this.openAI.chat.completions.create(settingsMessage);
-			
+
+
+			const response = await (SETTINGS.gptOn ? this.openAI.chat.completions.create(settingsMessage) : fakeResponceGPR())
+
 			this.history.pushAssistant(response)
 
 			const answer = response.choices[0];

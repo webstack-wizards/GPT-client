@@ -1,4 +1,4 @@
-import { COMMANDS } from "./helpers.js";
+import { COMMANDS } from "./helper/helper.js";
 
 const CAND_ADMIN = ["TESTING"]
 
