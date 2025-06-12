@@ -1,4 +1,5 @@
-import {transformeImageToBase64} from "./helpers.js";
+import {transformeImageToBase64, getWeather} from "./helpers.js";
+
 
 export async function workerTextGPT ({msg, chats, bot}){
 	const chatID = msg.chat.id
@@ -18,7 +19,6 @@ export async function workerTextGPT ({msg, chats, bot}){
 		bot.sendMessage(chatID, answerGPT.choices[0].message.content, {
 			parse_mode: "Markdown"
 		})
-		chat.historyMessages.pushAssistant(answerGPT)
 	} catch (error) {
 		console.log(answerGPT)
 	}
