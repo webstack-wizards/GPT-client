@@ -38,8 +38,12 @@ export async function workerCommand ({msg, chats, bot, user}){
 
 
 	if(messageText === COMMANDS.START){
-		chats[chatID] = new Chat ({chatID})
-		return bot.sendMessage(chatID, "Chat successfully created")
+		if(chats[chatID]){
+			return bot.sendMessage(chatID, "Chat already initiated!")
+		} else {
+			chats[chatID] = new Chat ({chatID})
+			return bot.sendMessage(chatID, "Chat successfully created")
+		}
 	} 
 
 	const chat = chats[chatID]
