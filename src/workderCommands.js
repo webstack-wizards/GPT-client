@@ -1,4 +1,4 @@
-import { COMMANDS, getterFile, SETTINGS } from "./helpers.js";
+import { COMMANDS, getterFile, SETTINGS } from "./helper/helper.js";
 import { Chat } from "./ChatClient.js";
 import { roles } from "./role.js";
 

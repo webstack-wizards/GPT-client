@@ -1,4 +1,4 @@
-import {transformeImageToBase64, getWeather} from "./helpers.js";
+import {transformeImageToBase64} from "./helper/helper.js";
 
 
 export async function workerTextGPT ({msg, chats, bot}){
